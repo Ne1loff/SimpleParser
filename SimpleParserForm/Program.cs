@@ -24,6 +24,8 @@ namespace SimpleParserForm
         {
             var e = (Exception) args.ExceptionObject;
             MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK);
+            Application.Exit();
+            Environment.Exit(0);
         }
     }
 }

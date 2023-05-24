@@ -11,6 +11,29 @@ namespace SimpleParserForm.parser
     {
         private readonly string _url;
 
+        private readonly List<string> _uselessTags = new List<string>
+        {
+            "area",
+            "base",
+            "br",
+            "col",
+            "embed",
+            "hr",
+            "img",
+            "input",
+            "link",
+            "menuitem",
+            "meta",
+            "param",
+            "source",
+            "track",
+            "wbr",
+            "script",
+            "style",
+            "textarea",
+            "title"
+        };
+
         public Parser(string url)
         {
             _url = url;
@@ -34,11 +57,11 @@ namespace SimpleParserForm.parser
             while (stack.Count != 0)
             {
                 var node = stack.Pop();
-                if (node.Name == "script" || node.Name == "noindex") continue;
+                if (_uselessTags.Contains(node.Name)) continue;
 
                 var text = node.InnerText.Trim();
-                
-                text = Regex.Replace(text, @"\s+", " "); 
+
+                text = Regex.Replace(text, @"\s+", " ");
                 text = Regex.Replace(text, @"\r+", "\r");
                 text = Regex.Replace(text, @"\n+", "\n");
 
@@ -59,10 +82,12 @@ namespace SimpleParserForm.parser
         {
             string html;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
-            using(var client = new WebClient()) {
+            using (var client = new WebClient())
+            {
                 client.Encoding = Encoding.UTF8;
                 html = client.DownloadString(_url);
             }
+
             return html;
         }
     }
